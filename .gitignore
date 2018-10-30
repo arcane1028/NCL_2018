@@ -1,0 +1,6 @@
+# folder
+**/.idea/*
+lab3/MNIST_data/*
+
+#file
+**/*.csv

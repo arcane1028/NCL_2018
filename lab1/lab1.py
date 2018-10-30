@@ -8,6 +8,7 @@ sess = tf.Session()
 print(sess.run(a))
 
 """
+tf.ConfigProto(inter_op_parallelism_threads=8)
 
 a = ['Life', 'is', 'too', 'short', 'you', 'need', 'python']
 print(a)
