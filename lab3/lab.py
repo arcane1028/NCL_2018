@@ -1,8 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-"""
-# 실습 1 linear function
+# 실습 1-1 linear function
 tf.set_random_seed(777)
 xy_test = np.loadtxt('magic_test.csv', delimiter=',', dtype=np.float32)
 x_test = xy_test[:, 0:-1]
@@ -34,7 +33,7 @@ with tf.Session() as sess:
     h, c, a = sess.run([hypothesis, predict, accuracy], feed_dict={X: x_test, Y: y_test})
     print("\nHypothesis: ", h, "\nCorrect (Y):", c, "\nAccuracy: ", a)
 
-# 실습 2 logistic function
+# 실습 1-2 logistic function
 
 X = tf.placeholder(tf.float32, shape=[None, 10])
 Y = tf.placeholder(tf.float32, shape=[None, 1])
@@ -59,8 +58,8 @@ with tf.Session() as sess:
     print("\nHypothesis: ", h, "\nCorrect (Y):", c, "\nAccuracy: ", a)
 
 
-"""
-# minist
+
+# 실습 2 minist
 
 from tensorflow.examples.tutorials.mnist import input_data
 import matplotlib.pyplot as plt
@@ -82,6 +81,7 @@ accuracy = tf.reduce_mean(tf.cast(is_correct, tf.float32))
 
 training_epochs = 10
 batch_size = 100
+
 for learning_rate in [0.01, 0.1, 0.5]:
     optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
     epoch_val = []
@@ -103,9 +103,10 @@ for learning_rate in [0.01, 0.1, 0.5]:
                 accuracy.eval(session=sess, feed_dict={X: mnist.validation.images, Y: mnist.validation.labels}))
             print("Train Accuracy: ", train_val[epoch])
             print("Validation Accuracy: ", validation_val[epoch])
-            plt.plot(epoch_val, train_val)
-            plt.plot(epoch_val, validation_val)
 
-
+        plt.plot(epoch_val, train_val, label='train ' + str(learning_rate))
+        plt.plot(epoch_val, validation_val, label='valid ' + str(learning_rate))
         print("\nTest Accuracy: ", accuracy.eval(session=sess, feed_dict={X: mnist.test.images, Y: mnist.test.labels}))
+
+plt.legend(loc="best")
 plt.show()
