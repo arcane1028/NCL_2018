@@ -1,6 +1,9 @@
 # folder
 **/.idea/*
 lab3/MNIST_data/*
+lab4/*/*
 
 #file
 **/*.csv
+
+!.gitinore
