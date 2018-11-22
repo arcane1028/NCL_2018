@@ -2,8 +2,8 @@
 **/.idea/*
 lab3/MNIST_data/*
 lab4/*/*
+lab5/data/*
 
 #file
 **/*.csv
-
-!.gitinore
+lab5/*.npy
