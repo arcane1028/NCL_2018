@@ -1,9 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import os
-
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 models = []
 num_models = 3
@@ -29,20 +25,18 @@ class Model:
             Y_one_hot = tf.reshape(Y_one_hot, [-1, nb_classes])
 
             W1 = tf.Variable(tf.random_normal([5, 5, 3, 32], stddev=0.01))
-
             L1 = tf.nn.conv2d(X_img, W1, strides=[1, 1, 1, 1], padding='SAME')
             L1 = tf.nn.relu(L1)
+
             L1 = tf.nn.max_pool(L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
             W2 = tf.Variable(tf.random_normal([5, 5, 32, 64], stddev=0.01))
-
             L2 = tf.nn.conv2d(L1, W2, strides=[1, 1, 1, 1], padding='SAME')
             L2 = tf.nn.relu(L2)
+
             L2 = tf.nn.max_pool(L2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
             L2 = tf.reshape(L2, [-1, 8 * 8 * 64])
-
-            # W3 = tf.get_variable("W3", shape=[8 * 8 * 64, nb_classes], initializer=tf.contrib.layers.xavier_initializer())
             W3 = tf.Variable(tf.random_normal([8 * 8 * 64, nb_classes], stddev=0.01))
             b = tf.Variable(tf.random_normal([nb_classes]))
 
@@ -54,15 +48,6 @@ class Model:
             predict = tf.argmax(hypothesis, 1)
             correct_prediction = tf.equal(predict, tf.argmax(Y_one_hot, 1))
             self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, dtype=tf.float32))
-
-        """
-        self.logits = tf.matmul(L2, W3) + b
-        self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.logits, labels=self.Y))
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=learning_late).minimize(self.cost)
-
-        predictions = tf.equal(tf.arg_max(self.logits, 1), tf.argmax(self.Y, 1))
-        self.accuracy = tf.reduce_mean(tf.cast(predictions, tf.float32))
-        """
 
     def predict(self, x_test):
         return self.sess.run(self.logits, feed_dict={self.X: x_test})
@@ -86,7 +71,7 @@ if __name__ == "__main__":
     print(np.shape(testY))
 
     with tf.Session() as sess:
-        m1 = Model(sess, "m1")
+        m1 = Model(sess, "m")
         print("learning start")
         sess.run(tf.global_variables_initializer())
 
@@ -99,8 +84,8 @@ if __name__ == "__main__":
                 batch_ys = trainY[i * batch_size:(i + 1) * batch_size]
                 c, _ = m1.train(batch_xs, batch_ys)
                 avg_cost += c / total_batch
-                # print("cost", c)
-            print(epoch, avg_cost, "acc: ", m1.get_accuracy(testX, testY))
+            if epoch % 10 == 0:
+                print(epoch, avg_cost, "acc: ", m1.get_accuracy(testX, testY))
         print("learning end")
         a = m1.get_accuracy(testX, testY)
         print("Accuracy: ", a)

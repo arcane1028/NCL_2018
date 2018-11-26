@@ -1,14 +1,10 @@
 import tensorflow as tf
 import numpy as np
-import os
-
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 models = []
 num_models = 3
 nb_classes = 3
-learning_late = 0.001
+learning_late = 0.0001
 training_epochs = 100
 batch_size = 100
 
@@ -77,7 +73,7 @@ if __name__ == "__main__":
     print(np.shape(testY))
 
     with tf.Session() as sess:
-        m1 = Model(sess, "m1")
+        m1 = Model(sess, "m")
         print("learning start")
         sess.run(tf.global_variables_initializer())
 
@@ -90,8 +86,8 @@ if __name__ == "__main__":
                 batch_ys = trainY[i * batch_size:(i + 1) * batch_size]
                 c, _ = m1.train(batch_xs, batch_ys)
                 avg_cost += c / total_batch
-                # print("cost", c)
-            print(epoch, avg_cost, "acc: ", m1.get_accuracy(testX, testY))
+            if epoch % 10 == 0:
+                print(epoch, avg_cost, "acc: ", m1.get_accuracy(testX, testY))
         print("learning end")
         a = m1.get_accuracy(testX, testY)
         print("Accuracy: ", a)

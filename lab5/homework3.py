@@ -1,9 +1,5 @@
 import tensorflow as tf
 import numpy as np
-import os
-
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 num_models = 3
 nb_classes = 3
