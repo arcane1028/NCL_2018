@@ -26,16 +26,17 @@ class Model:
             W1 = tf.get_variable("W1", shape=[5, 5, 3, 32], initializer=tf.contrib.layers.xavier_initializer())
             L1 = tf.nn.conv2d(X_img, W1, strides=[1, 1, 1, 1], padding='SAME')
             L1 = tf.nn.relu(L1)
+
             L1 = tf.nn.max_pool(L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
             W2 = tf.get_variable("W2", shape=[5, 5, 32, 64], initializer=tf.contrib.layers.xavier_initializer())
             L2 = tf.nn.conv2d(L1, W2, strides=[1, 1, 1, 1], padding='SAME')
             L2 = tf.nn.relu(L2)
+
             L2 = tf.nn.max_pool(L2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
             L2 = tf.reshape(L2, [-1, 8 * 8 * 64])
-            W3 = tf.get_variable("W3", shape=[8 * 8 * 64, nb_classes],
-                                 initializer=tf.contrib.layers.xavier_initializer())
+            W3 = tf.get_variable("W3", shape=[8 * 8 * 64, nb_classes],initializer=tf.contrib.layers.xavier_initializer())
             b = tf.get_variable("b", shape=[nb_classes], initializer=tf.contrib.layers.xavier_initializer())
 
             self.logits = tf.matmul(L2, W3) + b
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         for m in range(num_models):
             models.append(Model(sess, "model" + str(m)))
 
-        print("learning start")
+        print("Learning Start")
         sess.run(tf.global_variables_initializer())
 
         for epoch in range(training_epochs):
@@ -87,17 +88,17 @@ if __name__ == "__main__":
                 for m_idx, m in enumerate(models):
                     c, _ = m.train(batch_xs, batch_ys)
                     avg_cost_list[m_idx] += c / total_batch
-            acc_list = np.zeros(num_models)
-            for m_idx, m in enumerate(models):
-                a = m.get_accuracy(testX, testY)
-                acc_list[m_idx] = a
+            if epoch % 10 == 0 :
+                acc_list = np.zeros(num_models)
+                for m_idx, m in enumerate(models):
+                    a = m.get_accuracy(testX, testY)
+                    acc_list[m_idx] = a
 
-            print(epoch, avg_cost_list, acc_list)
+                print(epoch, avg_cost_list, acc_list)
 
-        print("learning end")
+        print("Learning End")
 
         test_size = len(testY)
-        print("test size", test_size)
         predictions = np.zeros(test_size * nb_classes).reshape(test_size, nb_classes)
         for m_idx, m in enumerate(models):
             print(m_idx, m.get_accuracy(testX, testY))
